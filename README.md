@@ -12,11 +12,11 @@ How to Use the Simulator:
 1. Definitions:
 1.1. Literal Meaning (T): A variable that indicates whether the uttered sentence is literal (0) or sarcastic (1).
 
-1.2. Contextual Cue (C): A variable that represents the situational context, affecting the interpretation of the utterance (0 = Neutral, 1 = Sarcastic).
+1.2. Contextual Cue (C): A variable that represents the situational context, affecting the interpretation of the utterance (0 = Literal, 1 = Sarcastic).
 
-1.3. Speaker Strategy (S): A variable that reflects the speaker’s intent, demonstrating how they wish their message to be perceived (0 = Neutral, 1 = Sarcastic).
+1.3. Speaker Strategy (S): A variable that reflects the speaker’s intent, demonstrating how they wish their message to be perceived (0 = Literal, 1 = Sarcastic).
 
-1.4. Listener Inference (L): A variable that shows how the listener interprets the utterance based on their understanding and context (0 = Neutral, 1 = Sarcastic).
+1.4. Listener Inference (L): A variable that shows how the listener interprets the utterance based on their understanding and context (0 = Literal, 1 = Sarcastic).
 
 2. Adjustment:
 To interact with the simulator, adjust the variables using the sliders provided:
