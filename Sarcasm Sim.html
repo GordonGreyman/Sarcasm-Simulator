@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Recursive Pragmatic and Game Theoretic Inference Simulation</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    .slider-container, .checkbox-container {
+      margin: 10px 0;
+    }
+    label {
+      display: inline-block;
+      width: 300px;
+    }
+    .output {
+      margin-top: 20px;
+      padding: 10px;
+      background: #f9f9f9;
+      border: 1px solid #ccc;
+    }
+    .iteration {
+      border-bottom: 1px solid #ddd;
+      padding: 3px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Recursive Pragmatic and Game Theoretic Inference Simulation</h1>
+  <p>This simulation implements a simplified model of recursive pragmatic inference where all parameter values are normalized between 0 (literal) and 1 (sarcastic). Adjust the parameters and the number of iterations below to see how the final interpretation is derived.</p>
+
+  <div class="slider-container">
+    <label for="literal">Literal Meaning T(u) (0 = Literal, 1 = Sarcastic):</label>
+    <input type="range" id="literal" min="0" max="1" value="0.5" step="0.01" oninput="updateValue('literaloutput', this.value)">
+    <span id="literaloutput">0.5</span>
+  </div>
+
+  <div class="slider-container">
+    <label for="context">Contextual Cue C(u) (0 = Negative, 1 = Positive):</label>
+    <input type="range" id="context" min="0" max="1" value="0.5" step="0.01" oninput="updateValue('contextoutput', this.value)">
+    <span id="contextoutput">0.5</span>
+  </div>
+
+  <div class="slider-container">
+    <label for="speaker">Speaker Strategy S(u) (0 = Negative, 1 = Positive):</label>
+    <input type="range" id="speaker" min="0" max="1" value="0.5" step="0.01" oninput="updateValue('speakeroutput', this.value)">
+    <span id="speakeroutput">0.5</span>
+  </div>
+
+  <div class="slider-container">
+    <label for="listener">Listener Inference L(u) (0 = Negative, 1 = Positive):</label>
+    <input type="range" id="listener" min="0" max="1" value="0.5" step="0.01" oninput="updateValue('listeneroutput', this.value)">
+    <span id="listeneroutput">0.5</span>
+  </div>
+
+  <div class="slider-container">
+    <label for="iterations">Number of Iterations (Recursion Steps, 1 to 50):</label>
+    <input type="range" id="iterations" min="1" max="50" value="10" step="1" oninput="updateValue('iterationsoutput', this.value)">
+    <span id="iterationsoutput">10</span>
+  </div>
+
+  <div class="checkbox-container">
+    <label for="enableGameTheory">
+      <input type="checkbox" id="enableGameTheory">
+      Enable Speaker Payoff and Listener Risk Aversion (Game–Theoretic Adjustment)
+    </label>
+  </div>
+
+  <button onclick="runSimulation()">Run Simulation</button>
+
+  <div class="output" id="output"></div>
+
+  <script>
+    // Update displayed slider value
+    function updateValue(id, value) {
+      document.getElementById(id).innerText = value;
+    }
+
+    // Run the simulation
+    function runSimulation() {
+      // Get slider values
+      var T = parseFloat(document.getElementById("literal").value);
+      var C = parseFloat(document.getElementById("context").value);
+      var S = parseFloat(document.getElementById("speaker").value);
+      var L = parseFloat(document.getElementById("listener").value);
+      var iterations = parseInt(document.getElementById("iterations").value, 10);
+      
+      // Check if game theoretic adjustment is enabled
+      var gameEnabled = document.getElementById("enableGameTheory").checked;
+      var adjustmentConstant = gameEnabled ? 0.1 : 0;
+
+      // Simulation fixed parameter: retention factor
+      var r = 0.7;
+      var delta = 0; // starting value: Δ₀(u) = 0
+      var history = [];
+
+      // Compute the average of the contextual parameters, adding the constant if enabled.
+      var avg = (C + S + L) / 3 + adjustmentConstant;
+      
+      // Perform the iterative update
+      for (var i = 0; i < iterations; i++) {
+        delta = r * delta + (1 - r) * avg;
+        history.push(delta.toFixed(3));
+      }
+
+      // Compute the final intended meaning I*(u)
+      var I_final = T + delta;
+
+      // Determine the absolute deviation from literal meaning
+      var diff = Math.abs(delta);
+
+      // Normalize the sarcastic score based on the maximum score of 1:
+      // 0 means literal, 1 means extremely sarcastic.
+      var normalizedScore = Math.min(diff, 1);
+
+      // Display the simulation steps and outcomes
+      var outputDiv = document.getElementById("output");
+      outputDiv.innerHTML = "";
+      outputDiv.innerHTML += "<p><strong>Iteration History of Δ:</strong> " + history.join(" → ") + "</p>";
+      outputDiv.innerHTML += "<p><strong>Final Intended Meaning (I*):</strong> " + I_final.toFixed(3) + "</p>";
+      outputDiv.innerHTML += "<p><strong>Literal Meaning (T):</strong> " + T.toFixed(3) + "</p>";
+      outputDiv.innerHTML += "<p><strong>Raw Difference (|Δ|):</strong> " + diff.toFixed(3) + "</p>";
+      outputDiv.innerHTML += "<p><strong>Normalized Interpretation (0 = Literal, 1 = Sarcastic):</strong> " + normalizedScore.toFixed(3) + "</p>";
+
+      // Provide interpretation based on the normalized score. A threshold of 0.5 is used.
+      if (normalizedScore < 0.5) {
+        outputDiv.innerHTML += "<p style='color: green;'><strong>Interpretation:</strong> Literal</p>";
+      } else {
+        outputDiv.innerHTML += "<p style='color: red;'><strong>Interpretation:</strong> Sarcastic</p>";
+      }
+    }
+  </script>
+</body>
+</html>
